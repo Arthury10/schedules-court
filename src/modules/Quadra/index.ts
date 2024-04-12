@@ -1,4 +1,4 @@
-interface IQuadra {
+export interface IQuadra {
   nome: string;
   esporte: string;
   horariosIndisponiveis?: string[];

@@ -2,29 +2,8 @@ import Quadra from "./modules/Quadra";
 import Reserva from "./modules/Reserva";
 import Usuario from "./modules/Usuario";
 import prompt from "prompt-sync";
-
-const quadrasDisponiveis = [
-  {
-    nome: "Quadra-1",
-    esporte: "Futsal",
-  },
-  {
-    nome: "Quadra-2",
-    esporte: "Volei",
-  },
-  {
-    nome: "Quadra-3",
-    esporte: "Basketball",
-  },
-  {
-    nome: "Quadra-4",
-    esporte: "Padel",
-  },
-  {
-    nome: "Quadra-5",
-    esporte: "Padel",
-  },
-];
+import Utils from "./utils";
+import { quadrasMocked } from "./modules/Quadra/__mocks__/quadras";
 
 const teclado = prompt();
 class Main {
@@ -32,13 +11,18 @@ class Main {
     let quadras: Quadra[] = [];
     let reservas: Reserva[] = [];
 
+    const dates = Utils.generateDatesArray(new Date());
+
+    console.log("Bem vindo ao sistema de agendamento de quadras");
+
     const nomeUsuario = teclado("Seu Nome: ");
     const telefoneUsuario = teclado("Seu Telefone: ");
 
-    quadrasDisponiveis?.forEach((item) => {
+    quadrasMocked?.forEach((item) => {
       const quadra = new Quadra({
         nome: item.nome,
         esporte: item.esporte,
+        horariosIndisponiveis: item.horariosIndisponiveis,
       });
 
       quadras.push(quadra);
@@ -50,7 +34,7 @@ class Main {
     });
 
     while (true) {
-      console.log("0 = Sair");
+      console.log("0 - Sair");
       console.log("1 - Criar Quadra");
       console.log("2 - Agendar Horario");
       console.log("3 - Listar Quadras");
@@ -125,6 +109,20 @@ class Main {
           console.table(quadras);
           break;
         case 4:
+          console.log("Quadras Disponiveis");
+          const quadrasLivresComHorarios = quadras.map((item) => {
+            const horariosLivres = dates.filter((date) =>
+              item.estaDisponivel(date)
+            );
+
+            return {
+              nome: item.nome,
+              esporte: item.esporte,
+              horariosLivres,
+            };
+          });
+
+          console.table(quadrasLivresComHorarios);
           break;
         case 5:
           console.table(reservas);
