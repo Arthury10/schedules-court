@@ -1,22 +1,31 @@
 interface IQuadra {
   nome: string;
   esporte: string;
-  horariosIndisponiveis: Date[];
+  horariosIndisponiveis?: string[];
 }
 
 class Quadra {
   nome: string;
   esporte: string;
-  horariosIndisponiveis: Date[] = [];
+  horariosIndisponiveis?: string[] = [];
 
   constructor(data: IQuadra) {
     const { nome, esporte, horariosIndisponiveis } = data;
     this.nome = nome;
     this.esporte = esporte;
-    this.horariosIndisponiveis;
+    this.horariosIndisponiveis = horariosIndisponiveis || [];
+  }
 
-    
-    console.log("Hello Quadra!!");
+  estaDisponivel(horario: string): boolean {
+    const disponivel = this.horariosIndisponiveis?.find(
+      (item) => item === horario
+    );
+
+    if (disponivel) {
+      return false;
+    }
+
+    return true;
   }
 }
 
