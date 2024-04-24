@@ -1,34 +1,53 @@
-class Utils {
-  static generateDatesArray = (data: Date) => {
-    const dates: string[] = [];
-    const startTime = 13; // 13:00, início do horário de funcionamento
-    const endTime = 22; // 22:00, fim do horário de funcionamento
+import Horario from "../modules/Horario";
 
-    // Configurando a data de início para hoje às 13:00
+class Utils {
+  static parseDate(input: string): Date {
+    const [day, month] = input.split("/").map(Number);
+    const year = new Date().getFullYear(); // Assume o ano atual para a reserva
+    return new Date(year, month - 1, day);
+  }
+
+  static transformDate(date: string, hour: string): Horario {
+    const dateObject = this.parseDate(date);
+    const [hourStart, minute] = hour.split(":").map(Number);
+    const dateStart = new Date(dateObject.setHours(hourStart, minute, 0, 0));
+
+    const horario = new Horario(dateStart);
+
+    horario.isAvailable = false;
+
+    return horario;
+  }
+
+  static generateDatesArray(): Horario[] {
+    const date = new Date();
+
+    const horarios: Horario[] = [];
+    const startTime = 17;
+    const endTime = 22;
+
     const startDate = new Date(
-      data.getFullYear(),
-      data.getMonth(),
-      data.getDate(),
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
       startTime
     );
 
     const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 14);
+    endDate.setDate(startDate.getDate() + 7);
     endDate.setHours(endTime);
 
     while (startDate < endDate) {
       for (let hour = startTime; hour < endTime; hour++) {
-        const mothLabel = startDate.getUTCMonth() + 1;
-        const dateString = `${startDate.getDate()}/${
-          mothLabel.toString().length > 1 ? mothLabel : "0" + mothLabel
-        }-${hour}:00-${hour + 1}:00`;
-        dates.push(dateString);
+        startDate.setHours(hour);
+        endDate.setHours(hour + 1);
+        horarios.push(new Horario(startDate));
       }
       startDate.setDate(startDate.getDate() + 1);
     }
 
-    return dates;
-  };
+    return horarios;
+  }
 }
 
 export default Utils;
